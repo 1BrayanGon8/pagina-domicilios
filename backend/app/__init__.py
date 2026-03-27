@@ -8,6 +8,7 @@ def create_app(config_name='development'):
     """Factory para crear la aplicación Flask"""
     app = Flask(__name__)
     
+    
     # Cargar configuración
     app.config.from_object(config[config_name])
     print(f"DEBUG: JWT_SECRET_KEY = {app.config.get('JWT_SECRET_KEY')}")
@@ -22,6 +23,11 @@ def create_app(config_name='development'):
     def unauthorized_response(callback):
         print(f"DEBUG: JWT unauthorized loader: {callback}")
         return jsonify({'mensaje': 'Necesitas autorización (token faltante o inválido).'}), 401
+
+
+    @app.route("/")
+    def home():
+        return "API funcionando 🚀"
 
     @jwt.invalid_token_loader
     def invalid_token_response(callback):
