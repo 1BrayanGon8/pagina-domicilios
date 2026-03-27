@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domicilios App - Entrega Rápida</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1>🚚 Domicilios App</h1>
+            </div>
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="#" onclick="mostrarPagina('inicio')">Inicio</a></li>
+                <li><a href="#" onclick="mostrarPagina('comercios')">Comercios</a></li>
+                <li id="misCuentaNav" style="display:none;">
+                    <a href="#" onclick="mostrarPagina('miCuenta')">Mi Cuenta</a>
+                </li>
+                <li id="misOrdenesNav" style="display:none;">
+                    <a href="#" onclick="mostrarPagina('ordenes')">Mis Órdenes</a>
+                </li>
+                <li id="adminNav" style="display:none;">
+                    <a href="#" onclick="mostrarPagina('admin')">Admin</a>
+                </li>
+                <li id="logoutNav" style="display:none;">
+                    <a href="#" onclick="logout()">Cerrar Sesión</a>
+                </li>
+                <li id="loginNav">
+                    <a href="#" onclick="mostrarPagina('login')">Iniciar Sesión</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <!-- Página: Inicio -->
+        <div id="pagina-inicio" class="pagina activa">
+            <section class="hero">
+                <h2>Bienvenido a Domicilios App</h2>
+                <p>Entrega rápida de productos desde tus comercios favoritos</p>
+                <button class="btn btn-primary" onclick="mostrarPagina('comercios')">Ver Comercios</button>
+            </section>
+        </div>
+
+        <!-- Página: Login/Registro -->
+        <div id="pagina-login" class="pagina">
+            <div class="form-container">
+                <div class="tabs">
+                    <button class="tab-btn activo" onclick="cambiarTab('login')">Iniciar Sesión</button>
+                    <button class="tab-btn" onclick="cambiarTab('registro')">Registrarse</button>
+                </div>
+
+                <!-- Form Login -->
+                <form id="loginForm" class="tab-content activo" onsubmit="handleLogin(event)">
+                    <h3>Iniciar Sesión</h3>
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                    <button type="submit" class="btn btn-primary">Ingresar</button>
+                    <p id="loginError" class="error"></p>
+                </form>
+
+                <!-- Form Registro -->
+                <form id="registroForm" class="tab-content" onsubmit="handleRegistro(event)">
+                    <h3>Crear Cuenta</h3>
+                    <input type="text" id="regNombre" placeholder="Nombre completo" required>
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                    <input type="password" id="regPassword" placeholder="Contraseña" required>
+                    <input type="tel" id="regTelefono" placeholder="Teléfono">
+                    <input type="text" id="regDireccion" placeholder="Dirección">
+                    <input type="text" id="regCiudad" placeholder="Ciudad">
+                    <select id="regRol">
+                        <option value="cliente">Cliente</option>
+                        <option value="comercio">Quiero vender (Comercio)</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Registrarse</button>
+                    <p id="registroError" class="error"></p>
+                </form>
+            </div>
+        </div>
+
+        <!-- Página: Comercios -->
+        <div id="pagina-comercios" class="pagina">
+            <h2>Comercios Disponibles</h2>
+            <div id="comerciosList" class="comercios-grid">
+                <!-- Se llena con JavaScript -->
+            </div>
+        </div>
+
+        <!-- Página: Detalle Comercio -->
+        <div id="pagina-comercio-detalle" class="pagina">
+            <button class="btn btn-secondary" onclick="mostrarPagina('comercios')">← Volver a Comercios</button>
+            <div id="comercioDetalleContainer">
+                <!-- Se llena con JavaScript -->
+            </div>
+        </div>
+
+        <!-- Página: Carrito -->
+        <div id="pagina-carrito" class="pagina">
+            <h2>Mi Carrito</h2>
+            <div id="carritoVacio" class="carrito-vacio">
+                <p>Tu carrito está vacío</p>
+                <button class="btn btn-primary" onclick="mostrarPagina('comercios')">Ver Comercios</button>
+            </div>
+            <div id="carritoLleno" style="display:none;">
+                <table id="carritoTable">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="carritoBody">
+                    </tbody>
+                </table>
+                <div class="carrito-totales">
+                    <p><strong>Total: $<span id="totalCarrito">0</span></strong></p>
+                    <input type="text" id="direccionEntrega" placeholder="Dirección de entrega" required>
+                    <textarea id="notasOrden" placeholder="Notas adicionales"></textarea>
+                    <button class="btn btn-primary" onclick="confirmarOrden()">Confirmar Orden</button>
+                    <button class="btn btn-secondary" onclick="vaciarCarrito()">Vaciar Carrito</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Página: Mi Cuenta -->
+        <div id="pagina-miCuenta" class="pagina">
+            <h2>Mi Cuenta</h2>
+            <form id="perfilForm" onsubmit="handleActualizarPerfil(event)">
+                <input type="text" id="perfil-nombre" placeholder="Nombre" required>
+                <input type="email" id="perfil-email" placeholder="Email" readonly>
+                <input type="tel" id="perfil-telefono" placeholder="Teléfono">
+                <input type="text" id="perfil-direccion" placeholder="Dirección">
+                <input type="text" id="perfil-ciudad" placeholder="Ciudad">
+                <input type="text" id="perfil-codigoPostal" placeholder="Código Postal">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <p id="perfilSuccess" class="success"></p>
+                <p id="perfilError" class="error"></p>
+            </form>
+
+            <hr>
+
+            <h3>Crear/Editar Comercio</h3>
+            <form id="comercioForm" onsubmit="handleGuardarComercio(event)">
+                <input type="text" id="com-nombre" placeholder="Nombre del comercio" required>
+                <textarea id="com-descripcion" placeholder="Descripción del comercio"></textarea>
+                <input type="tel" id="com-telefono" placeholder="Teléfono">
+                <input type="email" id="com-email" placeholder="Email">
+                <input type="text" id="com-direccion" placeholder="Dirección" required>
+                <input type="text" id="com-ciudad" placeholder="Ciudad">
+                <input type="text" id="com-codigoPostal" placeholder="Código Postal">
+                <input type="time" id="com-apertura" placeholder="Horario de apertura">
+                <input type="time" id="com-cierre" placeholder="Horario de cierre">
+                <input type="text" id="com-categoria" placeholder="Categoría (ej: Comida, Farmacia)">
+                <button type="submit" class="btn btn-primary">Guardar Comercio</button>
+                <p id="comercioSuccess" class="success"></p>
+                <p id="comercioError" class="error"></p>
+            </form>
+        </div>
+
+        <!-- Página: Mis Órdenes -->
+        <div id="pagina-ordenes" class="pagina">
+            <h2>Mis Órdenes</h2>
+            <div id="ordenesList">
+                <!-- Se llena con JavaScript -->
+            </div>
+        </div>
+
+        <!-- Página: Panel Admin -->
+        <div id="pagina-admin" class="pagina">
+            <h2>Panel de Administración</h2>
+            <div id="estadisticas" class="admin-stats">
+                <!-- Se llena con JavaScript -->
+            </div>
+            <div class="admin-section">
+                <h3>Usuarios</h3>
+                <div id="usuariosList">
+                    <!-- Se llena con JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón de Carrito Flotante -->
+    <button id="carritoBtn" class="carrito-flotante" onclick="mostrarPagina('carrito')">
+        🛒 Carrito (<span id="carritoCount">0</span>)
+    </button>
+
+    <footer>
+        <p>&copy; 2024 Domicilios App. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
